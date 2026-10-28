@@ -1,0 +1,10 @@
+{
+  "name": "hueline-assets",
+  "version": "1.0.0",
+  "description": "Hueline SS27 Saturation Lookbook & Shop",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
+

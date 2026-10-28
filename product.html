@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hueline Product</title>
+<meta name="description" content="Hueline product page template: gallery, sizing, dye story and recommendations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* Product page: editorial gallery on the left, a sticky buy box on the right, then the dye story and two recommendation rails. */
+.crumbs{display:flex;gap:10px;flex-wrap:wrap;padding-top:calc(96px + env(safe-area-inset-top,0px));color:var(--mute)}
+.crumbs a:hover{color:var(--ink)}
+.crumbs span[aria-current]{color:var(--ink)}
+
+.pdp{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(24px,4vw,72px);padding-block:24px clamp(80px,10vw,140px)}
+.gal{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gal figure{position:relative;min-width:0}
+.gal figure:first-child{grid-column:1/-1}
+.gal .media{aspect-ratio:3/4;border-radius:3px}
+.gal figure:first-child .media{aspect-ratio:4/5}
+.gal figcaption{position:absolute;left:12px;top:12px;padding:7px 10px;border-radius:999px;background:rgba(236,238,242,.86);pointer-events:none}
+.gal-dots{display:none}
+.buy-wrap{position:sticky;top:calc(88px + env(safe-area-inset-top,0px));align-self:start}
+
+/* Dye story band */
+.story{position:relative;overflow:hidden;background:var(--sbg);color:var(--sfg);padding-block:clamp(90px,12vw,170px)}
+.story-word{font-size:clamp(90px,21vw,340px);line-height:.78;white-space:nowrap}
+.story-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:clamp(24px,5vw,80px);align-items:end;margin-top:clamp(28px,4vw,56px)}
+.story-grid p{font:400 clamp(24px,2.6vw,38px)/1.15 var(--f-display);max-width:24ch;text-wrap:balance}
+.story-grid p em{font-style:italic}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;border-top:1px solid color-mix(in oklab,var(--sfg) 30%,transparent);padding-top:20px}
+.facts b{display:block;font:400 clamp(30px,3.4vw,52px)/1 var(--f-display);font-variant-numeric:tabular-nums}
+.facts span{display:block;margin-top:8px;font-size:13px;opacity:.8}
+.blob{position:absolute;right:-6vw;top:8%;width:clamp(220px,34vw,520px);aspect-ratio:1;border-radius:42% 58% 63% 37%/45% 41% 59% 55%;background:radial-gradient(circle at 30% 30%,color-mix(in oklab,var(--sbg) 60%,#fff),var(--sbg) 60%,color-mix(in oklab,var(--sbg) 70%,#000));filter:saturate(1.2);opacity:.9;pointer-events:none}
+
+/* Complete the look */
+.look{padding-block:clamp(90px,11vw,150px) 40px}
+.look-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(12px,2vw,24px)}
+.look-grid .pcard:nth-child(even){margin-top:clamp(0px,5vw,72px)}
+
+/* More in this style: drag rail */
+.more{padding-block:clamp(70px,9vw,130px) clamp(90px,11vw,150px);overflow:hidden}
+.more-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:clamp(24px,3vw,40px)}
+.arrows{display:flex;gap:8px}
+.arrows button{width:52px;height:52px;border-radius:50%;border:1px solid var(--ink);font:400 18px/1 var(--f-mono);transition:background-color .3s,color .3s}
+.arrows button:hover{background:var(--ink);color:var(--paper)}
+.more-vp{touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.more-track{display:flex;gap:clamp(12px,1.6vw,20px);width:max-content;padding-inline:var(--gutter);will-change:transform}
+.more-track .pcard{width:clamp(200px,22vw,320px);flex:none}
+.more-track .pcard img{pointer-events:none;-webkit-user-drag:none}
+.more-bar{margin:28px var(--gutter) 0;height:2px;background:var(--line)}
+.more-bar i{display:block;height:100%;background:var(--ink);transform-origin:left;transform:scaleX(.05)}
+
+/* Recently viewed */
+.recent{padding-block:0 clamp(90px,11vw,150px)}
+.recent-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(12px,2vw,24px)}
+@media (max-width:900px){.recent-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Footer */
+
+/* Mobile sticky bar */
+.mbar{position:fixed;left:0;right:0;bottom:0;z-index:90;display:none;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--paper);box-shadow:0 -1px 0 var(--line),0 -20px 40px rgba(22,20,26,.08);transform:translateY(110%);transition:transform .5s var(--ease)}
+.mbar.show{transform:none}
+.mbar b{display:block;font:500 14px/1.2 var(--f-sans)}
+.mbar span{font:500 12px/1.2 var(--f-mono);color:var(--mute)}
+.mbar .btn{padding:14px 20px}
+
+@media (max-width:900px){
+  .pdp{grid-template-columns:1fr}
+  .gal{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:8px;margin-inline:calc(var(--gutter)*-1);padding-inline:var(--gutter);scrollbar-width:none}
+  .gal::-webkit-scrollbar{display:none}
+  .gal figure{flex:0 0 86%;scroll-snap-align:center}
+  .gal figure:first-child .media{aspect-ratio:3/4}
+  .gal-dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
+  .gal-dots i{width:6px;height:6px;border-radius:50%;background:var(--line);transition:background-color .3s,width .3s}
+  .gal-dots i.on{width:18px;border-radius:3px;background:var(--ink)}
+  .buy-wrap{position:static}
+  .story-grid{grid-template-columns:1fr}
+  .look-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mbar{display:flex}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" aria-hidden="true">
+  <div class="c-pos"><div class="c-shape"></div><span class="c-label"></span></div>
+  <div class="c-dot"></div>
+</div>
+
+<header class="nav" id="nav">
+  <a href="index.html" class="logo cond" data-cursor="link">Hue<b>line</b></a>
+  <nav class="nav-links mono" aria-label="Primary">
+    <a href="index.html#collections" data-cursor="link">Wardrobe</a>
+    <a href="index.html#lookbook" data-cursor="link">Lookbook</a>
+    <a href="index.html#colour" data-cursor="link">Colour</a>
+    <a href="index.html#shop" data-cursor="link">Shop</a>
+  </nav>
+  <div class="nav-tools mono">
+    <button type="button" data-open="search" data-cursor="link" aria-label="Search (press /)">Search</button>
+    <button type="button" class="hide-sm" data-open="saved" data-cursor="link">Saved (<span data-saved-count>0</span>)</button>
+    <button type="button" data-open="bag" data-cursor="link">Bag (<span data-bag-count>0</span>)</button>
+    <button type="button" class="menu-btn" data-open="menu" aria-label="Open menu">Menu</button>
+  </div>
+</header>
+
+<main>
+  <nav class="crumbs wrap mono" aria-label="Breadcrumb" id="crumbs"></nav>
+
+  <section class="pdp wrap">
+    <div>
+      <div class="gal" id="gallery" aria-label="Product images"></div>
+      <div class="gal-dots" id="dots" aria-hidden="true"></div>
+    </div>
+    <div class="buy-wrap" id="buyWrap"></div>
+  </section>
+
+  <section class="story wrap" id="story">
+    <div class="blob" id="blob" aria-hidden="true"></div>
+    <span class="mono" id="storyRef"></span>
+    <div class="story-word cond" id="storyWord" aria-hidden="true"></div>
+    <div class="story-grid">
+      <p id="storyLine"></p>
+      <div class="facts" id="facts"></div>
+    </div>
+  </section>
+
+  <section class="look wrap" aria-labelledby="lookTitle">
+    <div class="sec-head">
+      <h2 class="cond" id="lookTitle"><span class="ln"><span>Complete</span></span><span class="ln"><span class="serif-i">the look</span></span></h2>
+      <p id="lookNote">Pieces cut from neighbouring dye lots, picked to wear with this one.</p>
+    </div>
+    <div class="look-grid" id="lookGrid"></div>
+  </section>
+
+  <section class="more" aria-labelledby="moreTitle">
+    <div class="more-head wrap">
+      <div class="sec-head" style="margin:0">
+        <h2 class="cond" id="moreTitle"><span class="ln"><span>More in</span></span><span class="ln"><span class="serif-i" id="moreCat">this style</span></span></h2>
+      </div>
+      <div class="arrows"><button type="button" id="prev" aria-label="Previous" data-cursor="link">&larr;</button><button type="button" id="next" aria-label="Next" data-cursor="link">&rarr;</button></div>
+    </div>
+    <div class="more-vp" id="moreVp" data-cursor="drag" data-cursor-label="&larr; Drag &rarr;">
+      <div class="more-track" id="moreTrack"></div>
+    </div>
+    <div class="more-bar"><i id="moreBar"></i></div>
+  </section>
+  <section class="recent wrap" id="recent" hidden aria-labelledby="recentTitle">
+    <div class="sec-head"><h2 class="cond" id="recentTitle"><span class="ln"><span>Recently</span></span><span class="ln"><span class="serif-i">viewed</span></span></h2><p>Pieces you opened on this device.</p></div>
+    <div class="recent-grid" id="recentGrid"></div>
+  </section>
+</main>
+
+<footer class="sf" data-site-footer></footer>
+
+<div class="mbar" id="mbar" aria-hidden="true">
+  <div><b id="mName"></b><span id="mPrice"></span></div>
+  <button type="button" class="btn btn--ink" id="mAdd">Add to bag</button>
+</div>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/Flip.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<script src="catalog.js"></script>
+<script src="ui.js"></script>
+<script>
+(() => {
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const { reduce } = HLUI;
+const hasG = !!window.gsap;
+
+/* ---------- Which product? product.html?p=HL-E-01 ---------- */
+let code = 'HL-E-01';
+try { const params = new URLSearchParams(location.search); code = params.get('p') || params.get('code') || location.hash.slice(1) || code; } catch (e) {}
+const p = HL.byCode(code) || HL.byCode('HL-E-01');
+document.title = `${p.name} | Hueline`;
+document.documentElement.style.setProperty('--accent', p.tint);
+
+/* ---------- Breadcrumb ---------- */
+$('#crumbs').innerHTML = `<a href="index.html" data-cursor="link">Home</a><span>/</span><a href="index.html#shop" data-cursor="link">${p.catLabel}</a><span>/</span><span aria-current="page">${p.name}</span>`;
+
+/* ---------- Gallery ---------- */
+const n = p.views.length;
+$('#gallery').innerHTML = p.views.map((v, i) => `
+  <figure>
+    <div class="media zoomable" style="--tint:${p.tint}" data-cursor="zoom" data-cursor-label="Zoom">
+      <span class="media-fb">${p.name}, ${v.label}</span>${HL.imgTag(p, i, 1400, i === 0)}
+    </div>
+    <figcaption class="mono">${String(i + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')} &middot; ${v.label}</figcaption>
+  </figure>`).join('');
+$$('#gallery .zoomable').forEach(HLUI.bindZoom);
+$('#dots').innerHTML = p.views.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('');
+$('#gallery').addEventListener('scroll', e => {
+  const g = e.currentTarget, i = Math.round(g.scrollLeft / (g.firstElementChild.offsetWidth + 8));
+  $$('#dots i').forEach((d, k) => d.classList.toggle('on', k === i));
+}, { passive: true });
+
+/* ---------- Buy box ---------- */
+$('#buyWrap').innerHTML = HLUI.buyBoxHTML(p, 'pdp');
+HLUI.bindBuyBox($('#buyWrap'), p, (name, hex) => {
+  document.documentElement.style.setProperty('--accent', hex);
+  $$('#gallery .media').forEach(m => m.style.setProperty('--tint', hex));
+});
+
+/* ---------- Dye story ---------- */
+const lightDyes = ['Marigold', 'Chalk'];
+const story = $('#story');
+story.style.setProperty('--sbg', p.tint);
+story.style.setProperty('--sfg', lightDyes.includes(p.colour) ? '#16141a' : '#ffffff');
+$('#storyRef').textContent = `Dye ref ${p.dye[0]} · ${p.catLabel}`;
+$('#storyWord').textContent = p.colour;
+$('#storyLine').innerHTML = `${p.dye[1]}. <em>Every piece in this lot carries the same bath,</em> and none of the next one.`;
+$('#facts').innerHTML = `<div><b data-count="48">48</b><span>Pieces in this dye lot</span></div><div><b data-count="${p.price % 5 + 2}">${p.price % 5 + 2}</b><span>Days from vat to finished piece</span></div><div><b data-count="${p.code.endsWith('1') ? 19 : 14}">${p.code.endsWith('1') ? 19 : 14}</b><span>${p.cat === 'evening' ? 'Momme silk weight' : 'Hand checks before it ships'}</span></div>`;
+
+/* ---------- Recommendations ---------- */
+$('#lookGrid').innerHTML = HL.completeLook(p, 4).map(x => HLUI.cardHTML(x)).join('');
+const more = HL.related(p, 8);
+$('#moreCat').textContent = p.catLabel.toLowerCase();
+$('#moreTrack').innerHTML = more.map(x => HLUI.cardHTML(x)).join('');
+
+/* ---------- Mobile sticky bar ---------- */
+$('#mName').textContent = p.name; $('#mPrice').textContent = HL.inr(p.price);
+
+/* ---------- Recently viewed (this device) ---------- */
+let recent = [];
+try { recent = JSON.parse(localStorage.getItem('hueline-recent') || '[]').filter(c => c !== p.code && HL.byCode(c)); } catch (e) {}
+if (recent.length) {
+  $('#recent').hidden = false;
+  $('#recentGrid').innerHTML = recent.slice(0, 4).map(c => HLUI.cardHTML(HL.byCode(c))).join('');
+}
+try { localStorage.setItem('hueline-recent', JSON.stringify([p.code, ...recent].slice(0, 8))); } catch (e) {}
+$('#mAdd').addEventListener('click', () => {
+  const box = $('#buyWrap .buy');
+  if (box._getSize && box._getSize()) $('#buyWrap .buy-add').click();
+  else { const s = $('#buyWrap .sizes'); HLUI.lenis ? HLUI.lenis.scrollTo(s, { offset: -120 }) : s.scrollIntoView({ behavior: 'smooth', block: 'center' }); $('#buyWrap .buy-msg').textContent = 'Pick a size first.'; }
+});
+
+/* ---------- Draggable "more in this style" rail ---------- */
+const vp = $('#moreVp'), track = $('#moreTrack'), bar = $('#moreBar');
+let x = 0, tx = 0, down = false, sx = 0, start = 0, vel = 0, lastX = 0, moved = 0, dragged = false;
+const maxX = () => Math.max(0, track.scrollWidth - vp.clientWidth);
+const clampX = v => Math.min(0, Math.max(-maxX(), v));
+vp.addEventListener('pointerdown', e => { down = true; moved = 0; dragged = false; sx = lastX = e.clientX; start = tx; vel = 0; });
+vp.addEventListener('pointermove', e => {
+  if (!down) return;
+  moved += Math.abs(e.clientX - lastX);
+  if (moved > 6 && !dragged) { dragged = true; vp.setPointerCapture(e.pointerId); }
+  vel = e.clientX - lastX; lastX = e.clientX;
+  if (dragged) tx = clampX(start + (e.clientX - sx));
+});
+const release = () => { if (!down) return; down = false; if (dragged) tx = clampX(tx + vel * 14); };
+vp.addEventListener('pointerup', release); vp.addEventListener('pointercancel', release);
+vp.addEventListener('click', e => { if (dragged) { e.stopPropagation(); e.preventDefault(); dragged = false; } }, true);
+vp.addEventListener('wheel', e => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { e.preventDefault(); tx = clampX(tx - e.deltaX); } }, { passive: false });
+const stepW = () => (track.firstElementChild ? track.firstElementChild.offsetWidth + 20 : 300);
+$('#prev').addEventListener('click', () => (tx = clampX(tx + stepW())));
+$('#next').addEventListener('click', () => (tx = clampX(tx - stepW())));
+addEventListener('resize', () => (tx = clampX(tx)));
+const tick = () => {
+  x += (tx - x) * (reduce ? 1 : .12);
+  track.style.transform = `translate3d(${x}px,0,0)`;
+  const m = maxX(); bar.style.transform = `scaleX(${m ? Math.max(.05, -x / m) : 1})`;
+};
+hasG ? gsap.ticker.add(tick) : (function loop() { tick(); requestAnimationFrame(loop); })();
+
+if (!hasG || reduce) return;
+
+/* ================= Motion ================= */
+// Intro: gallery wipes up, buy box rises, name letters lift
+const nameEl = $('#buyWrap .buy-name');
+const words = nameEl.textContent.split(' ');
+nameEl.innerHTML = words.map(w => `<span class="ln" style="display:inline-block"><span>${w}</span></span>`).join(' ');
+const intro = gsap.timeline({ defaults: { ease: 'expo.out' } });
+intro.from('#crumbs', { y: 14, opacity: 0, duration: .8 })
+  .from('#gallery figure', { clipPath: 'inset(100% 0% 0% 0%)', duration: 1.4, ease: 'expo.inOut', stagger: .12 }, 0)
+  .from('#gallery img', { scale: 1.3, duration: 1.8, stagger: .12, clearProps: 'scale' }, .2)
+  .from('#gallery figcaption', { opacity: 0, y: 10, duration: .6, stagger: .1 }, 1)
+  .from($$('.ln > span', nameEl), { yPercent: 110, duration: 1.1, stagger: .06 }, .3)
+  .from($$('#buyWrap .buy > *:not(.buy-name)'), { y: 24, opacity: 0, duration: .9, stagger: .05 }, .45)
+  .fromTo('.nav', { yPercent: -100, opacity: 0 }, { yPercent: 0, y: 0, opacity: 1, duration: .9, clearProps: 'transform,translate,opacity' }, .2);
+
+// Story band: word letters scrub in, blob drifts and turns
+const letters = [...$('#storyWord').textContent].map(c => `<span class="ch">${c}</span>`).join('');
+$('#storyWord').innerHTML = letters;
+gsap.from('#storyWord .ch', { yPercent: 100, opacity: 0, ease: 'none', stagger: .06, scrollTrigger: { trigger: story, start: 'top 85%', end: 'top 25%', scrub: 1 } });
+gsap.fromTo('#blob', { yPercent: -20, rotate: -20 }, { yPercent: 40, rotate: 50, ease: 'none', scrollTrigger: { trigger: story, start: 'top bottom', end: 'bottom top', scrub: true } });
+gsap.from('#storyLine, #facts > div', { y: 40, opacity: 0, duration: 1, ease: 'expo.out', stagger: .08, scrollTrigger: { trigger: '.story-grid', start: 'top 80%' } });
+$$('#facts b').forEach(b => { const o = { v: 0 }, end = +b.dataset.count; gsap.to(o, { v: end, duration: 1.8, ease: 'power3.out', scrollTrigger: { trigger: b, start: 'top 90%' }, onUpdate: () => (b.textContent = Math.round(o.v)) }); });
+
+// Section heads and cards
+$$('.sec-head h2').forEach(h => gsap.from($$('.ln > span', h), { yPercent: 110, duration: 1.2, ease: 'expo.out', stagger: .1, scrollTrigger: { trigger: h, start: 'top 85%' } }));
+gsap.from('#lookGrid .pcard', { y: 70, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: .08, scrollTrigger: { trigger: '#lookGrid', start: 'top 85%' } });
+gsap.from('#moreTrack .pcard', { x: 120, opacity: 0, duration: 1.2, ease: 'expo.out', stagger: .06, scrollTrigger: { trigger: '#moreVp', start: 'top 85%' } });
+$$('#lookGrid .pcard .media, #moreTrack .pcard .media').forEach(m => gsap.from(m, { clipPath: 'inset(0% 0% 100% 0%)', duration: 1.2, ease: 'expo.inOut', scrollTrigger: { trigger: m, start: 'top 90%' } }));
+
+// Mobile bar appears once the main Add button scrolls away
+ScrollTrigger.create({ trigger: '#buyWrap .buy-add', start: 'bottom top', endTrigger: '.sf', end: 'top bottom', toggleClass: { targets: '#mbar', className: 'show' } });
+
+// Nav hides on scroll down
+let lastY = 0;
+ScrollTrigger.create({ start: 0, end: 'max', onUpdate: s => { const y = s.scroll(); $('#nav').classList.toggle('is-hidden', y > lastY && y > 200); lastY = y; } });
+addEventListener('load', () => ScrollTrigger.refresh());
+})();
+</script>
+</body>
+</html>
